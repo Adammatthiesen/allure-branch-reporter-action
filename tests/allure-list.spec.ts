@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 
-test('test', async ({ page }) => {
+test('allure-list', async ({ page }) => {
     await page.goto('/allure/')
     await expect(page.getByRole('cell', { name: '-08-10 20:27:29' })).toBeVisible()
     await expect(page.getByRole('cell', { name: 'Open report 5929584265' })).toBeVisible()
