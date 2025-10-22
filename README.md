@@ -1,19 +1,6 @@
 # allure-branch-reporter-action
 
-A **JavaScript** version of the Allure Report with history per branch (type: `node20`)
-
-**Important: Requires java to be installed in prior to using the action!** 
-
-Docker version of the action: [allure-report-with-history-per-branch](https://github.com/marketplace/actions/allure-report-with-history-per-branch)
-
-See examples:
-
-- [Allure History List](https://mgrybyk-org.github.io/allure-report-branch-js-action/allure-action/main/self-test/)
-- [Allure Report](https://mgrybyk-org.github.io/allure-report-branch-js-action/allure-action/main/self-test/latest.html)
-- [Browse different branches](https://mgrybyk-org.github.io/allure-report-branch-js-action/allure-action/)
-- [Pull Request Comment Example](https://github.com/mgrybyk-org/allure-report-branch-js-action/pull/3)
-
-*Compatible with [HTML Trend Report Action](https://github.com/marketplace/actions/publish-report-per-branch).*
+Fork of [allure-report-branch-js-action](https://github.com/mgrybyk-org/allure-report-branch-js-action) for the @withstudiocms org
 
 ## Usage
 
@@ -35,7 +22,7 @@ steps:
       path: gh-pages-dir # checkout path
 
   - name: Allure Report Action
-    uses: Adammatthiesen/allure-branch-reporter-action@main
+    uses: withstudiocms/allure-branch-reporter-action@main
     if: always()
     continue-on-error: true
     id: allure # used in comment to PR
@@ -55,7 +42,7 @@ steps:
 
 ### Adding PR Comment
 
-Make sure to set `id` in `Adammatthiesen/allure-branch-reporter-action@main` step.
+Make sure to set `id` in `withstudiocms/allure-branch-reporter-action@main` step.
 
 ```yaml
 permissions:
@@ -74,12 +61,6 @@ steps:
       comment_tag: allure_report
       mode: recreate
 ```
-
-## Screenshots
-
-![Allure Reports History](docs/allure_history.png "Allure Reports History")
-![PR Comment](docs/pr_comment.png "PR Comment")
-![Allure Report Trend](docs/allure_trend.png "Allure Report Trend")
 
 ## API
 
@@ -107,7 +88,3 @@ GitHub runners ubuntu-latest, windows-latest, macos-latest have Java installed s
 ## Credits
 
 - [thollander/actions-comment-pull-request](https://github.com/thollander/actions-comment-pull-request) for building Github Action that comments the linked PRs
-
-## Planned features
-
-- cleanup `data.json` file per report. Raise an issue if you're interested!
