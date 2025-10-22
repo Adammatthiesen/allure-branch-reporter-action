@@ -20,11 +20,42 @@ import { getBranchName } from './src/helpers.js'
 import { isFileExist } from './src/isFileExists.js'
 import { cleanupOutdatedBranches, cleanupOutdatedReports } from './src/cleanup.js'
 import { writeLatestReport } from './src/writeLatest.js'
+import { cleanupOutdatedCNAMEFile, shouldWriteCNAMEFile, writeCNAMEFile } from './src/cname.js'
 
-const baseDir = 'allure-action'
+const baseDir = 'allure-reports'
 const allureRelease = '2.34.1'
 const allureCliDir = 'allure-cli'
 const allureArchiveName = 'allure-commandline.tgz'
+
+/**
+ * Validates the provided CNAME string.
+ * Throws an error if the CNAME is invalid.
+ *
+ * @param cname - The CNAME string to validate.
+ * @returns The trimmed CNAME string if valid.
+ * @throws Error if the CNAME is empty or contains protocol.
+ *
+ * @example
+ * // Valid CNAME
+ * ensureCNAMEisValid('example.com') // returns 'example.com'
+ *
+ * // Invalid CNAME (empty)
+ * ensureCNAMEisValid('   ') // throws Error
+ *
+ * // Invalid CNAME (with protocol)
+ * ensureCNAMEisValid('http://example.com') // throws Error
+ */
+function ensureCNAMEisValid(cname: string): string {
+    const trimmedCname = cname.trim()
+    if (trimmedCname === '') {
+        throw new Error('CNAME cannot be empty or whitespace only')
+    }
+    const http_sRegex = /^(http|https):\/\//i
+    if (http_sRegex.test(trimmedCname)) {
+        throw new Error('CNAME should not contain protocol (http:// or https://)')
+    }
+    return trimmedCname
+}
 
 try {
     const runTimestamp = Date.now()
@@ -37,6 +68,7 @@ try {
     const listDirsBranch = core.getInput('list_dirs_branch') == 'true'
     const branchCleanupEnabled = core.getInput('branch_cleanup_enabled') == 'true'
     const maxReports = parseInt(core.getInput('max_reports'), 10)
+    const cname = core.getInput('cname').trim() === '' ? undefined : core.getInput('cname').trim()
     const branchName = getBranchName(github.context.ref, github.context.payload.pull_request)
     const ghPagesBaseDir = path.join(ghPagesPath, baseDir)
     const reportBaseDir = path.join(ghPagesBaseDir, branchName, reportId)
@@ -51,12 +83,15 @@ try {
 
     // urls
     const githubActionRunUrl = `https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/actions/runs/${github.context.runId}`
-    const ghPagesUrl = `https://${github.context.repo.owner}.github.io/${github.context.repo.repo}`
+    const ghPagesUrl = cname
+        ? `https://${ensureCNAMEisValid(cname)}`
+        : `https://${github.context.repo.owner}.github.io/${github.context.repo.repo}`
     const ghPagesBaseUrl = `${ghPagesUrl}/${baseDir}/${branchName}/${reportId}`.replaceAll(' ', '%20')
     const ghPagesReportUrl = `${ghPagesBaseUrl}/${runUniqueId}`.replaceAll(' ', '%20')
 
     // log
     console.log({
+        cname: cname || 'not set',
         report_dir: sourceReportDir,
         gh_pages: ghPagesPath,
         report_id: reportId,
@@ -94,6 +129,12 @@ try {
     }
     if (maxReports > 0) {
         await cleanupOutdatedReports(ghPagesBaseDir, maxReports)
+    }
+
+    if (cname && (await shouldWriteCNAMEFile(cname, ghPagesPath))) {
+        await writeCNAMEFile(cname, ghPagesPath)
+    } else if (!cname) {
+        await cleanupOutdatedCNAMEFile(ghPagesPath)
     }
 
     // folder listing

@@ -33,6 +33,10 @@ inputs:
     description: 'Max reports to keep per branch/report. Set to 0 to disable cleanup.'
     required: false
     default: 100
+  cname:
+    description: 'CNAME file content for GitHub Pages'
+    required: false
+    default: ''
 outputs:
   report_url:
     description: 'Published Allure Report url'
