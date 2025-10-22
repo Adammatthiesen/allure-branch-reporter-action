@@ -1,15 +1,15 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from '@playwright/test';
 
-test.beforeEach(async ({ page }) => {
-    await page.goto('/allure')
-})
+test('test', async ({ page }) => {
+  await page.goto('/allure/');
+  await expect(page.getByRole('cell', { name: '-08-10 20:27:29' })).toBeVisible();
+  await expect(page.getByRole('cell', { name: 'Open report 5929584265' })).toBeVisible();
+  await expect(page.getByRole('cell', { name: '-08-09 16:40:49' })).toBeVisible();
+  await expect(page.getByRole('cell', { name: 'Open report 5924491320' })).toBeVisible();
+  await expect(page.getByRole('cell', { name: '-08-07 09:07:29' })).toBeVisible();
+  await expect(page.getByRole('cell', { name: 'Open report 5924418676' })).toBeVisible();
+  await expect(page.getByRole('cell', { name: '-08-06 05:20:49' })).toBeVisible();
+  await expect(page.getByRole('cell', { name: 'Open report 5918532444' })).toBeVisible();
 
-test('allure list', async ({ page }) => {
-    await expect(page.locator('#allureTable thead tr')).toBeVisible()
-    await expect(page.locator('#allureTable tbody tr')).toHaveCount(4)
-    await expect(page.locator('#allureTable tbody tr:nth-child(1)')).toHaveClass('test-unknown')
-    await expect(page.locator('#allureTable tbody tr:nth-child(2)')).toHaveClass('test-fail')
-    await expect(page.locator('#allureTable tbody tr:nth-child(3)')).toHaveClass('test-pass')
-
-    await expect(page).toHaveScreenshot()
-})
+  await expect(page).toHaveScreenshot();
+});
