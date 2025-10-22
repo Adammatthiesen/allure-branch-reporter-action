@@ -1,4 +1,4 @@
-# allure-report-branch-js-action
+# allure-branch-reporter-action
 
 A **JavaScript** version of the Allure Report with history per branch (type: `node20`)
 
@@ -35,7 +35,7 @@ steps:
       path: gh-pages-dir # checkout path
 
   - name: Allure Report Action
-    uses: mgrybyk-org/allure-report-branch-js-action@v1
+    uses: Adammatthiesen/allure-branch-reporter-action@main
     if: always()
     continue-on-error: true
     id: allure # used in comment to PR
@@ -55,7 +55,7 @@ steps:
 
 ### Adding PR Comment
 
-Make sure to set `id` in `mgrybyk-org/allure-report-branch-js-action` step.
+Make sure to set `id` in `Adammatthiesen/allure-branch-reporter-action@main` step.
 
 ```yaml
 permissions:
